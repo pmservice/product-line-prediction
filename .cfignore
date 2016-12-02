@@ -1,0 +1,4 @@
+node_modules
+
+# copy whole public folder no matter what it contains
+!public

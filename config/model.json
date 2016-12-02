@@ -1,0 +1,28 @@
+{
+  "model-name": "GoodsCategoryPrediction",
+  "model-schema": [
+    {"id": "GENDER", "name": "Gender", "type": "STRING"},
+    {"id": "AGE", "name": "Age", "type": "INTEGER"},
+    {"id": "MARITAL_STATUS", "name": "Marital Status", "type": "STRING"},
+    {"id": "PROFESSION", "name": "Profession", "type": "STRING"}
+  ],
+  "model-sample-input": [
+    {"row": "M,27,Single,Professional"},
+    {"row": "F,61,Married,Other"},
+    {"row": "F,56,Unspecified,Hospitality"},
+    {"row": "F,43,Unspecified,Hospitality"},
+    {"row": "M,29,Single,Other" },
+    {"row": "F,25,Single,Professional"},
+    {"row": "M,47,Married,Other"},
+    {"row": "F,18,Single,Student" },
+    {"row": "F,31,Married,Executive"},
+    {"row": "M,28,Single,Trades"}
+  ],
+  "model-prediction-mapping": {
+    "0": "Camping Equipment",
+    "1": "Personal Accessories",
+    "2": "Mountaineering Equipment",
+    "3": "Golf Equipment",
+    "4": "Outdoor Protection"
+  }
+}
