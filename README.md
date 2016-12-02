@@ -25,7 +25,7 @@ Within this sample scoring application you are able to:
 ### Prepare Bluemix ecosystem
 1. From Bluemix catalog choose [IBM Watson Machine Learning][pa] service. This service will later be binded with a Node.js application created from this sample.
 2. Using the *IBM Watson Machine Learning Dashboard*, add the model location by providing the sample *ProjectID* named *WatsonMachineLearningSampleProject*. Now you should see the model *GoodsCategoryPrediction* in the list of available models.
-3. Create deployment of type *online* using *CustomerSatisfactionPrediction* model.
+3. Create deployment of type *online* using *GoodsCategoryPrediction* model.
 
 
 # Deployment
