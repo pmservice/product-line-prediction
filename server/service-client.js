@@ -165,7 +165,7 @@ ServiceClient.prototype = {
         return callback(null, deployments);
       } else if (error) {
         logger.error('getDeployments()', error);
-        return callback(error.messge);
+        return callback(error.message);
       } else {
         error = new Error('Service error code: ' + response.statusCode);
         logger.error('getDeployments()', error);
