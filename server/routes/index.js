@@ -1,6 +1,5 @@
-/* eslint-env node
-
-   Copyright 2016 IBM Corp.
+/*
+   Copyright 2017 IBM Corp.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -24,13 +23,19 @@ var PMClient = require('../service-client');
 envRouter.get('/deployments', function (req, res) {
   var pmEnv = req.app.get('pm service env');
   var pmClient = new PMClient(pmEnv);
-  pmClient.getDeployments(function (err, result) {
-    if (err) {
-      res.status(500).json({errors: err});
-    } else {
-      res.json(result);
-    }
-  });
+  if (!pmClient.isAvailable()) {
+    let err = `To use this sample application, you must bind it with the instance of the
+      IBM Watson Machine Learning service and use the proper model from this service.`;
+    res.status(404).send(err);
+  } else {
+    pmClient.getDeployments(function (err, result) {
+      if (err) {
+        res.status(500).json({errors: err});
+      } else {
+        res.json(result);
+      }
+    });
+  }
 });
 
 envRouter.post('/score', function (req, res) {

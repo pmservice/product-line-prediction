@@ -1,28 +1,21 @@
 {
-  "model-name": "GoodsCategoryPrediction",
   "model-schema": [
-    {"id": "GENDER", "name": "Gender", "type": "STRING"},
-    {"id": "AGE", "name": "Age", "type": "INTEGER"},
-    {"id": "MARITAL_STATUS", "name": "Marital Status", "type": "STRING"},
-    {"id": "PROFESSION", "name": "Profession", "type": "STRING"}
+    {"name": "GENDER", "type": "string"},
+    {"name": "AGE", "type": "integer"},
+    {"name": "MARITAL_STATUS", "type": "string"},
+    {"name": "PROFESSION", "type": "string"}
   ],
-  "model-sample-input": [
-    {"row": "M,27,Single,Professional"},
-    {"row": "F,61,Married,Other"},
-    {"row": "F,56,Unspecified,Hospitality"},
-    {"row": "F,43,Unspecified,Hospitality"},
-    {"row": "M,29,Single,Other" },
-    {"row": "F,25,Single,Professional"},
-    {"row": "M,47,Married,Other"},
-    {"row": "F,18,Single,Student" },
-    {"row": "F,31,Married,Executive"},
-    {"row": "M,28,Single,Trades"}
+  "model-input": [
+    {"id": "Alice", "data": ["F",19,"Single","Professional"]},
+    {"id": "Gregory", "data": ["M",57,"Married","Trades"]},
+    {"id": "Joanna", "data": ["F",40, "Married", "Executive"]},
+    {"id": "Alexander", "data": ["M",36,"Single","Sales"]}
   ],
   "model-prediction-mapping": {
-    "0": "Camping Equipment",
-    "1": "Personal Accessories",
-    "2": "Mountaineering Equipment",
-    "3": "Golf Equipment",
-    "4": "Outdoor Protection"
+    "0": ["Camping Equipment", "camping.svg"],
+    "1": ["Personal Accessories", "accessories.svg"],
+    "2": ["Mountaineering Equipment", "mountaineering.svg"],
+    "3": ["Golf Equipment", "golfing.svg"],
+    "4": ["Outdoor Protection", "outdoor_protection.svg"]
   }
 }

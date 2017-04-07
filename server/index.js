@@ -1,6 +1,5 @@
-/* eslint-env node
-
-   Copyright 2016 IBM Corp.
+/*
+   Copyright 2017 IBM Corp.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,10 +16,6 @@
 
 'use strict';
 
-
-// ----------------------------------------------------------------------------
-// Model Executor
-// ----------------------------------------------------------------------------
 // express server
 var express = require('express');
 // Error handler for development mode
@@ -50,11 +45,15 @@ try {
   if (devMode) {
     let filePath = './config/local.json';
     fs.accessSync(filePath, fs.constants.R_OK);
-    let localEnv = JSON.parse(fs.readFileSync(filePath));
-    cfAppOptions.vcap = {
-      services: localEnv
-    };
-    logger.info(`Using local CF environment read from ${filePath}`);
+    try {
+      let localEnv = JSON.parse(fs.readFileSync(filePath));
+      cfAppOptions.vcap = {
+        services: localEnv
+      };
+      logger.info(`Using local CF environment read from ${filePath}`);
+    } catch (err) {
+      logger.warn(`Config file ${filePath} is not a valid JSON file and will not be used.`);
+    }
   }
 } catch (err) {
   logger.debug(`Failed to read the dev config file: ${err}`);
@@ -78,17 +77,11 @@ if (pmServiceEnv) {
 if (devMode) {
   let errorhandler = require('errorhandler');
   app.use(errorhandler());
-  var webpackDevMiddleware = require('webpack-dev-middleware');
-  var webpack = require('webpack');
-  var config = require('../webpack.config.js');
-  var compiler = webpack(config);
-  app.use(webpackDevMiddleware(compiler, {
-    quiet: true
-  }));
 }
 
 // serve the files out of ./public/build as our main files
 app.use(express.static(__dirname + '/../public/build'));
+app.use(express.static(__dirname + '/../app/static'));
 app.use(bodyParser.urlencoded({
   extended: false
 }));

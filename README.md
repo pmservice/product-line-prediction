@@ -5,14 +5,13 @@
 # About
 The application demonstrates usage of [IBM Watson Machine Learning][pa] [Bluemix][bm] offering.
 
-Application is based on Node.js and Express framework. It uses [IBM Watson Machine Learning REST API][pa-api] to integrate with Data Science Experience (*DSX*) developed analytics (check [Docs](https://console.ng.bluemix.net/docs/services/PredictiveModeling/index-gentopic1.html#genTopProcId2) for more options).
+Application is based on Node.js and Express framework and utilizes [IBM Watson Machine Learning REST API][pa-api].
 
 Within this sample scoring application you are able to:
-* select one of online deployments (scoring) based on *GoodsCategoryPrediction* sample model
-* verify required input data schema (fields name and type)
-* drag and drop *csv* file with input data for scoring (or double click on input data field to open file browser)
-* make score requests by using „Get score” button
-* display scoring result in form of table
+* select one of online deployments (scoring)
+* select one of customers
+* make score requests by using 'Generate Predictions' button
+* display predicted recommendations for selected customer
 
 ![Application screenshot](/doc/app-scr.png)
 
@@ -24,16 +23,23 @@ Within this sample scoring application you are able to:
 
 ### Prepare Bluemix ecosystem
 1. From Bluemix catalog choose [IBM Watson Machine Learning][pa] service. This service will later be binded with a Node.js application created from this sample.
-2. Using the *IBM Watson Machine Learning Dashboard*, add the model location by providing the sample *ProjectID* named *WatsonMachineLearningSampleProject*. Now you should see the model *GoodsCategoryPrediction* in the list of available models.
-3. Create deployment of type *online* using *GoodsCategoryPrediction* model.
+2. Using the *IBM Watson Machine Learning Dashboard*, add the *Product Line Prediction* model as described [here](https://github.com/pmservice/wml-sample-models/tree/master/spark/product-line-prediction). A custom model can also be used; the requirement is that its input schema matches following schema:
+```json
+[{"name": "GENDER", "type": "string"},
+  {"name": "AGE", "type": "integer"},
+  {"name": "MARITAL_STATUS", "type": "string"},
+  {"name": "PROFESSION", "type": "string"}]
+```
+
+3. Create deployment of type *online* using *Product Line Prediction* model.
 
 
-# Deployment
+# Application Deployment
 For a fast start, you can deploy the pre-built app to Bluemix by clicking the button
 
-[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/pmservice/product-line-prediction&branch=v1_repo)
+[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/pmservice/product-line-prediction)
 
-Note the application is fully functional only if binded with an instance of *IBM Watson Machine Learning* service, which need to be done manually. Check [instructions](#binding-services-in-bluemix) how to do it.
+**Note:** the application is fully functional only if binded with an instance of *IBM Watson Machine Learning* service, which needs to be done manually. Check [instructions](#binding-services-in-bluemix) how to do it.
 
 ### Manual Bluemix deployment
 As an alternative to the button, the application can be manually deployed to Bluemix by pushing it with Cloud Foundry commands, as described in next [section](#push-to-bluemix). Manual deployment is also required when you want to deploy [modified source code](#source-code-changes). Manual deployment consists of [pushing](#push-to-bluemix) the application to Bluemix followed with [binding](#binding-services-in-bluemix) *IBM Watson Machine Learning* service to deployed application.
@@ -70,6 +76,7 @@ The repository comes with pre-build app. If you want to rebuild application afte
 The source code placed in [service-client.js](server/service-client.js) file is an example of how to call [IBM Watson Machine Learning REST API][pa-api] through JavaScript code. It demonstrates following aspects:
   * Access token generation
   * Retrieval of online deployments
+  * Extracting model from a deployment to make sure the deployment's model has expected schema
   * Scoring with a chosen online deployment
 
 

@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 IBM Corp.
+   Copyright 2017 IBM Corp.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@ var webpack = require('webpack');  // eslint-disable-line
 var path = require('path');  // eslint-disable-line
 
 module.exports = {
-  entry: './app/main.js',
+  entry: './src/main.js',
   devtool: 'source-map',
   output: {
     path: __dirname + '/public/build',
     filename: 'bundle.js'
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /.jsx?$/,
         loader: 'babel-loader',
@@ -35,11 +35,35 @@ module.exports = {
         }
       },
       { test: /\.(html|png|jpg|jpeg|gif|eot|svg)$/,
-          loader: "file?name=[path][name].[ext]&context=./app/static"
+          loader: "file-loader?name=[path][name].[ext]&context=./app/static"
         },
-      { test: /\.css$/, loader: "style-loader!css-loader" },
-      { test: /\.(woff|woff2)$/, loader:"url?prefix=font/&limit=5000" },
-      { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=application/octet-stream" },
+      { test: /\.css$/,
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader',
+            options: {
+              modules: true,
+              localIdentName: '[name]_[local]__[hash:base64:5]',
+              camelCase: 'dashes'
+            }
+          }
+        ]
+      },
+      { test: /\.scss$/,
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader',
+            options: {
+              modules: true,
+              localIdentName: '[name]_[local]__[hash:base64:5]',
+              camelCase: 'dashes'
+            }
+          },
+          { loader: 'sass-loader' }
+        ]
+      },
+      { test: /\.(woff|woff2)$/, loader: "url-loader?prefix=font/&limit=5000" },
+      { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream" },
     ]
   }
 };
