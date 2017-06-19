@@ -23,12 +23,7 @@ const debug = require('debug')('sample');
 const TOKEN_PATH = '/v2/identity/token';
 
 const modelInfo = require('../config/model.json');
-
-var schema = []
-
-modelInfo['model-schema'].map(function(obj) {
-  schema.push(obj[Object.keys(obj)[0]])
-})
+var schema = modelInfo['model-schema'].map(obj => obj.name)
 
 function getTokenFromTokenEndoint(tokenEndpoint, user, password) {
   debug('getTokenFromTokenEndoint', tokenEndpoint);
