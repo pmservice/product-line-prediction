@@ -19140,7 +19140,7 @@ var Scoring = function (_Component) {
         // validate deployment's model schema
         result = result.map(function (d) {
           var matches = false;
-          var schema = d.model.inputDataSchema.fields;
+          var schema = d.model.input_data_schema.fields;
           if (schema.length === ctx.expectedSchema.length) {
             matches = true;
             for (var i = 0; i < schema.length; i++) {

@@ -83,21 +83,23 @@ ServiceClient.prototype = {
 
   getScore: function (href, data, callback) {
     logger.enter('getScore()', 'href: ' + href + ', data: ' + data);
-
     let options = {
-      method: 'PUT',
+      method: 'POST',
       uri: href,
       headers: {'content-type': 'application/json'}
     };
-    let body = JSON.stringify({record: data});
+    let body = JSON.stringify({values: [data], fields: ["GENDER","AGE","MARITAL_STATUS","PROFESSION"]});
     debug(body);
     options.body = body;
 
     this.performRequest(options, function (error, response, body) {
       if (!error && response.statusCode === 200) {
         var scoreResponse = JSON.parse(body);
+        scoreResponse["probability"] = {values: scoreResponse.values[0][9]}
+
         logger.info('getScore()', `successfully finished scoring for scoringHref ${href}`);
-        callback && callback(null, scoreResponse.result);
+
+        callback && callback(null, scoreResponse);
       } else if (error) {
         logger.error(error);
         callback && callback(JSON.stringify(error.message));
@@ -121,7 +123,7 @@ ServiceClient.prototype = {
     logger.enter('getModels()');
     let options = {
       method: 'GET',
-      uri: '/v2/artifacts/models'
+      uri: '/v2/published_models'
     };
 
     this.performRequest(options, function (error, response, body) {
@@ -145,7 +147,7 @@ ServiceClient.prototype = {
 
     let options = {
       method: 'GET',
-      uri: '/v2/online/deployments'
+      uri: '/v2/deployments'
     };
 
     this._getModels((error, result) => {
@@ -163,9 +165,10 @@ ServiceClient.prototype = {
             deployments = deployments
               .map((item) => {
                 let {entity} = item;
-                debug(entity, entity);
-                let dmHref = entity.artifactVersion.href;
-                let [, dmGuid] = dmHref.match(re);
+                let {metadata} = item;
+                let dmHref = entity.deployed_version.href;
+                debug('deployed version', dmHref);
+                let dmGuid = entity.published_model.guid;
                 let model = allModels.find(m => m.metadata.guid === dmGuid);
                 if (model != null) {
                   model = model.entity;
@@ -183,8 +186,8 @@ ServiceClient.prototype = {
                 let result = {
                   name: entity.name,
                   status: entity.status,
-                  createdAt: item.metadata.createdAt,
-                  scoringHref: entity.scoringHref,
+                  createdAt: item.metadata.created_at,
+                  scoringHref: entity.scoring_href,
                   id: item.metadata.guid,
                   model: model
                 };
