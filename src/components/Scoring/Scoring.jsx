@@ -47,7 +47,7 @@ class Scoring extends Component {
       // validate deployment's model schema
       result = result.map(d => {
         let matches = false;
-        let schema = d.model.inputDataSchema.fields;
+        let schema = d.model.input_data_schema.fields;
         if (schema.length === ctx.expectedSchema.length) {
           matches = true;
           for (let i = 0; i < schema.length; i++) {
