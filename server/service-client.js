@@ -22,6 +22,14 @@ const logger = log4js.getLogger('server/service-client');
 const debug = require('debug')('sample');
 const TOKEN_PATH = '/v2/identity/token';
 
+const modelInfo = require('../config/model.json');
+
+var schema = []
+
+modelInfo['model-schema'].map(function(obj) {
+  schema.push(obj[Object.keys(obj)[0]])
+})
+
 function getTokenFromTokenEndoint(tokenEndpoint, user, password) {
   debug('getTokenFromTokenEndoint', tokenEndpoint);
   return new Promise((resolve, reject) => {
@@ -88,14 +96,17 @@ ServiceClient.prototype = {
       uri: href,
       headers: {'content-type': 'application/json'}
     };
-    let body = JSON.stringify({values: [data], fields: ["GENDER","AGE","MARITAL_STATUS","PROFESSION"]});
+    let body = JSON.stringify({values: [data], fields: schema});
     debug(body);
     options.body = body;
 
     this.performRequest(options, function (error, response, body) {
       if (!error && response.statusCode === 200) {
         var scoreResponse = JSON.parse(body);
-        scoreResponse["probability"] = {values: scoreResponse.values[0][9]}
+
+        var index = scoreResponse.fields.indexOf("probability");
+
+        scoreResponse["probability"] = {values: scoreResponse.values[0][index]};
 
         logger.info('getScore()', `successfully finished scoring for scoringHref ${href}`);
 
@@ -187,7 +198,9 @@ ServiceClient.prototype = {
                   name: entity.name,
                   status: entity.status,
                   createdAt: item.metadata.created_at,
-                  scoringHref: entity.scoring_href,
+                  // this is a workaround till /v2/deployments fix is deployed
+                  scoringHref: metadata.href + "/online",
+                  //scoringHref: entity.scoring_href,
                   id: item.metadata.guid,
                   model: model
                 };
