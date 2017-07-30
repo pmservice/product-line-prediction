@@ -1,0 +1,13 @@
+{
+  "pm-20": [
+    {
+      "credentials": {
+        "url": "https://ibm-watson-ml.mybluemix.net",
+        "access_key": "Cqm5nz1bf8RI2Zn93eyrbwW06oftF5A0VWf5mliWMp4TM/uPGH4xEf3npxHutdFXpxSFKe9cZoFYLlzgPf++qpWZYcc+6fawL9S0V+2V79Adc+zik+ZHJYrsBRl9GAcs",
+        "username": "6a8a8490-1133-44a2-8752-c46acfc4039c",
+        "password": "ee73c828-39eb-4e5a-80bc-7b250f163743",
+        "instance_id": "b0f9a67c-500a-45d6-aa6d-76e353f54c1e"
+      }
+    }
+  ]
+}
