@@ -222,7 +222,6 @@ ServiceClient.prototype = {
                     } else {
                       model.author = undefined;
                     }
-                    console.log(1, 'm', model);
                     let result = {
                       name: entity.name,
                       status: entity.status,
