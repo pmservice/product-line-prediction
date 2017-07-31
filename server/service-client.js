@@ -129,7 +129,7 @@ ServiceClient.prototype = {
     logger.enter('getModels()');
     let options = {
       method: 'GET',
-      uri: '/v2/published_models'
+      uri: '/v3/wml_instances/' + this.credentials.instance_id + '/published_models'
     };
 
     this.performRequest(options, function (error, response, body) {
@@ -148,61 +148,95 @@ ServiceClient.prototype = {
     });
   },
 
-  getDeployments: function (callback) {
-    logger.enter('getDeployments()');
 
+  _getInstanceDetails: function (callback) {
+    logger.enter('getInstanceDetails()');
     let options = {
       method: 'GET',
-      uri: '/v2/deployments'
+      uri: '/v3/wml_instances/' + this.credentials.instance_id
     };
 
-    this._getModels((error, result) => {
+    this.performRequest(options, function (error, response, body) {
+      if (!error && response.statusCode === 200) {
+        let models = JSON.parse(body);
+        debug('instance details', models);
+        return callback(null, models);
+      } else if (error) {
+        logger.error('getInstanceDetails()', error);
+        return callback(error.message);
+      } else {
+        error = new Error('Service error code: ' + response.statusCode);
+        logger.error('getInstanceDetails()', error);
+        return callback(error.message);
+      }
+    });
+  },
+
+  getDeployments: function (callback) {
+    logger.enter('getDeploymentsU()')
+
+    this._getInstanceDetails((error, result) => {
       if (error) {
         return callback(error);
       } else {
-        let allModels = result;
+        let instanceDetails = result;
+
+        let options = {
+          method: 'GET',
+          uri: instanceDetails.entity.published_models.url
+        };
 
         this.performRequest(options, (error, response, body) => {
           if (!error && response.statusCode === 200) {
-            let deployments = JSON.parse(body);
-            deployments = deployments && deployments.resources;
-            debug('all deployments', deployments);
-            let re = new RegExp('/v2/artifacts/models/([^/]+)/versions');
-            deployments = deployments
-              .map((item) => {
-                let {entity} = item;
-                let {metadata} = item;
-                let dmHref = entity.deployed_version.href;
-                debug('deployed version', dmHref);
-                let dmGuid = entity.published_model.guid;
-                let model = allModels.find(m => m.metadata.guid === dmGuid);
-                if (model != null) {
-                  model = model.entity;
-                  model.trainingDataSchema = undefined;
-                  model.pipelineVersion = undefined;
-                  model.latestVersion = undefined;
-                  model.versionsHref = undefined;
-                }
-                if (model.author && model.author.name) {
-                  model.author = model.author.name;
-                } else {
-                  model.author = undefined;
-                }
-                console.log(1, 'm', model);
-                let result = {
-                  name: entity.name,
-                  status: entity.status,
-                  createdAt: item.metadata.created_at,
-                  // this is a workaround till /v2/deployments fix is deployed
-                  scoringHref: metadata.href + "/online",
-                  //scoringHref: entity.scoring_href,
-                  id: item.metadata.guid,
-                  model: model
-                };
-                return result;
-              });
-            debug('matching & prepared online deployments: ', deployments);
-            return callback(null, deployments);
+            let deployments_parsed = JSON.parse(body)
+
+            let options = {
+              method: 'GET',
+              uri: deployments_parsed.resources[0].entity.deployments.url
+            };
+
+            this.performRequest(options, (error, response, body) => {
+              if (!error && response.statusCode === 200) {
+
+                let deployments = JSON.parse(body);
+                deployments = deployments && deployments.resources;
+                debug('all deployments', deployments);
+                deployments = deployments
+                  .map((item) => {
+                    let {entity} = item;
+                    let {metadata} = item;
+                    let dmHref = entity.deployed_version.url;
+                    debug('deployed version', dmHref);
+                    let dmGuid = entity.published_model.guid;
+                    debug("dmGuid", dmGuid)
+                    let model = deployments_parsed.resources.find(m => m.metadata.guid === dmGuid);
+                    if (model != null) {
+                      model = model.entity;
+                      model.trainingDataSchema = undefined;
+                      model.pipelineVersion = undefined;
+                      model.latestVersion = undefined;
+                      model.versionsHref = undefined;
+                    }
+                    if (model.author && model.author.name) {
+                      model.author = model.author.name;
+                    } else {
+                      model.author = undefined;
+                    }
+                    let result = {
+                      name: entity.name,
+                      status: entity.status,
+                      createdAt: item.metadata.created_at,
+                      scoringHref: entity.scoring_url,
+                      id: item.metadata.guid,
+                      model: model
+                    };
+                    return result;
+                  });
+                debug('matching & prepared online deployments: ', deployments);
+                return callback(null, deployments);
+              }
+            }
+            )
           } else if (error) {
             logger.error('getDeployments()', error);
             return callback(error.message);
@@ -211,7 +245,8 @@ ServiceClient.prototype = {
             logger.error('getDeployments()', error);
             return callback(error.message);
           }
-        });
-      }});
+        })
+      }
+    })
   }
 };
