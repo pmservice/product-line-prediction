@@ -177,14 +177,14 @@ ServiceClient.prototype = {
 
     this._getInstanceDetails((error, result) => {
       if (error) {
-        return callback(error)
+        return callback(error);
       } else {
-        let instanceDetails = result
+        let instanceDetails = result;
 
         let options = {
           method: 'GET',
           uri: instanceDetails.entity.published_models.url
-        }
+        };
 
         this.performRequest(options, (error, response, body) => {
           if (!error && response.statusCode === 200) {
