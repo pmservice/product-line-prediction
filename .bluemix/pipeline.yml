@@ -1,52 +1,51 @@
 ---
 stages:
-- name: Build Stage
+- name: BUILD
   inputs:
   - type: git
-    branch: master
+    branch: ${BRANCH}
+    service: ${SAMPLE_REPO}
   triggers:
   - type: commit
   jobs:
   - name: Build
     type: builder
-    artifact_dir: ''
-- name: Deploy Stage
+- name: DEPLOY
   inputs:
   - type: job
-    stage: Build Stage
+    stage: BUILD
     job: Build
   triggers:
   - type: stage
+  properties:
+  - name: BIND_TO
+    value: ${BIND_TO}
+    type: text
   jobs:
-  - name: Deploy to dev
+  - name: Deploy application and bind service
     type: deployer
     target:
-      url: ${CF_TARGET_URL}
-      organization: ${CF_ORGANIZATION}
-      space: ${CF_SPACE}
-      application: ${CF_APP}
-    script: |-
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |
       #!/bin/bash
-      echo appName "${CF_APP}"
-      echo organization "${CF_ORGANIZATION}"
-      echo space "${CF_SPACE}"
-      echo url "${CF_TARGET_URL}"
-      serviceId=`echo ${CF_APP} | tail -c 37`
-      echo serviceId "${serviceId}"
-      serviceJson=`cf curl /v2/service_instances/${serviceId}`
+      echo Application "${CF_APP}" to be deployed in "${CF_ORG}" organization in "${CF_SPACE}" space
+      echo Checking for service with id "${BIND_TO}"
+      serviceJson=`cf curl /v2/service_instances/${BIND_TO}`
       echo serviceJson "${serviceJson}"
-      errorCode=`echo ${serviceJson} | grep -Po '(?<="error_code": ")[^"]*' || true` 
-      echo errorCode ${errorCode}
+      errorCode=`echo ${serviceJson} | grep -Po '(?<="error_code": ")[^"]*' || true`
       if [[ -z $errorCode ]]
       then
        serviceName=`echo ${serviceJson} | grep -Po '(?<="name": ")[^"]*' || true`
-       echo serviceName "${serviceName}"
+       echo serviceName: "${serviceName}"
        if [[ ! -z $serviceName ]]
        then
         serviceInfo=`cf service "${serviceName}" || true`
-        echo serviceInfo "${serviceInfo}"
-        serviceLabel=`echo ${serviceInfo} | awk '{for (I=1;I<=NF;I++) if ($I == "Service:") {print $(I+1)};}'` 
-        echo serviceLabel "${serviceLabel}"
+        echo serviceInfo: "${serviceInfo}"
+        serviceLabel=`echo ${serviceInfo} | awk '{for (I=1;I<=NF;I++) if ($I == "Service:") {print $(I+1)};}'`
+        echo serviceLabel: "${serviceLabel}"
         if [[ ! -z $serviceLabel ]]
         then
          sed -i '$ a \  services:' manifest.yml
@@ -55,11 +54,12 @@ stages:
          sed -i "$ a \    PA_SERVICE_LABEL: ${serviceLabel}" manifest.yml
         else
          echo "The problem occured when retrieving the serviceLabel. The service will not be bound to the app."
-        fi 
+        fi
        else
          echo "The problem occured when retrieving the serviceName. The service will not be bound to the app."
-       fi 
+       fi
       else
+        echo errorCode ${errorCode}
         echo "The problem occured when retrieving the serviceName. The service will not be bound to the app."
       fi
       echo manifest.yml

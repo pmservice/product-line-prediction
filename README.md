@@ -37,7 +37,7 @@ Within this sample scoring application you are able to:
 # Application Deployment
 For a fast start, you can deploy the pre-built app to Bluemix either by clicking the button
 
-[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/pmservice/product-line-prediction)
+[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/pmservice/product-line-prediction&appName=line-prediction&branch=master)
 
 or using Watson Machine Learning Dashboard -> Samples -> (+) button.
 
