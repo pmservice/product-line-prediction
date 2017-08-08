@@ -19,7 +19,6 @@ template:
       [{{branch}}]({{repository}}/tree/{{branch}})
 toolchain:
   name: '{{baseName}}-toolchain'
-  description: 'takie cos dla desccc'
   template:
     getting_started:
       $ref: "#/messages/template.gettingStarted"
