@@ -23,7 +23,7 @@ Within this sample scoring application you are able to:
 
 ### Prepare Bluemix ecosystem
 1. From Bluemix catalog choose [IBM Watson Machine Learning][pa] service. This service will later be binded with a Node.js application created from this sample.
-2. Using the *IBM Watson Machine Learning Dashboard*, add the *Product Line Prediction* model as described [here](https://github.com/pmservice/wml-sample-models/tree/master/spark/product-line-prediction). A custom model can also be used; the requirement is that its input schema matches following schema:
+2. Using the *Watson Studio*, add the *Product Line Prediction* model as described [here](https://dataplatform.ibm.com/docs/content/analyze-data/pm_service_api_spark_online.html?context=analytics). A custom model can also be used; the requirement is that its input schema matches following schema:
 ```json
 [{"name": "GENDER", "type": "string"},
   {"name": "AGE", "type": "integer"},
