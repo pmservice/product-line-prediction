@@ -36,6 +36,14 @@ class DeploymentsTable extends Component {
   constructor (props) {
     super(props);
     this.handleSelect = this.handleSelect.bind(this);
+    this.statusKeys = {
+      'DEPLOY_IN_PROGRESS': 'Deployment In Progress',
+      'DEPLOY_SUCCESS': 'Deployment Successful',
+      'DEPLOY_FAILURE': 'Deployment Failed',
+      'UPDATE_IN_PROGRESS': 'Update In Progress',
+      'UPDATE_SUCCESS': 'Update Successful',
+      'UPDATE_FAILURE': 'Update Failed'
+    };
   }
   handleSelect (e) {
     let rawDeployment = e.target.parentNode.getAttribute('value');
@@ -61,16 +69,16 @@ class DeploymentsTable extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.props.data.map(function (entry) {
+            {this.props.data.map((entry) => {
               return (
                 <tr
                   key={entry.id}
                   value={JSON.stringify(entry)}
                   onClick={ctx.handleSelect}
                   className={classNames(entry.disabled ? [styles.disableRow] : styles.enableRow)}
-                  title={entry.disabled ? "Data schema of this model is incompatible with data schema expected by this application.": ''}>
+                  title={entry.disabled ? "Data schema of this model is incompatible with data schema expected by this application." : ''}>
                   <td className={classNames({[styles.enabledRowName]: !entry.disabled, markWithColor: ctx.props.selected === entry.name}, styles.name)}>{entry.name}</td>
-                  <td className={styles['status']}>{entry.status}</td>
+                  <td className={styles['status']}>{this.statusKeys[entry.status]}</td>
                   <td className={styles['date-created']}>{entry.createdAt}</td>
                   <td className={styles['model-name']}>{entry.model.name}</td>
                   <td className={styles['model-author']}>{entry.model.author}</td>
@@ -80,7 +88,7 @@ class DeploymentsTable extends Component {
             })}
           </tbody>
         </table>
-        {this.props.data.length===0 &&
+        {this.props.data.length === 0 &&
           <div style={{padding: '3% 20%', color: '#797979'}}>To work with this application, you need to have online deployment of Product Line Prediction model created in your WML service instance.
           For more information check application <a href='https://github.com/pmservice/product-line-prediction/blob/master/README.md' target='_blank'>readme</a>.</div>
         }

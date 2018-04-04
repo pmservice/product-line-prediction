@@ -45,7 +45,13 @@ class Scoring extends Component {
     let ctx = this;
     this.serverRequest = $.get('/env/deployments', function (result) {
       // validate deployment's model schema
-      result = result.map(d => {
+      result = result.filter((d) => {
+        if (!d.model || !d.model.input_data_schema || !d.model.input_data_schema ||
+          !d.model.input_data_schema.fields || !d.model.runtimeEnvironment || !d.model.runtimeEnvironment.includes('spark')) {
+          return false;
+        }
+        return true;
+      }).map(d => {
         let matches = false;
         let schema = d.model.input_data_schema.fields;
         if (schema.length === ctx.expectedSchema.length) {

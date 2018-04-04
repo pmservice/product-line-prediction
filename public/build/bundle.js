@@ -12466,86 +12466,7 @@ module.exports = validateDOMNesting;
 /* 86 */
 /***/ (function(module, exports) {
 
-module.exports = {
-	"model-schema": [
-		{
-			"name": "GENDER",
-			"type": "string"
-		},
-		{
-			"name": "AGE",
-			"type": "integer"
-		},
-		{
-			"name": "MARITAL_STATUS",
-			"type": "string"
-		},
-		{
-			"name": "PROFESSION",
-			"type": "string"
-		}
-	],
-	"model-input": [
-		{
-			"id": "Alice",
-			"data": [
-				"F",
-				19,
-				"Single",
-				"Professional"
-			]
-		},
-		{
-			"id": "Gregory",
-			"data": [
-				"M",
-				57,
-				"Married",
-				"Trades"
-			]
-		},
-		{
-			"id": "Joanna",
-			"data": [
-				"F",
-				40,
-				"Married",
-				"Executive"
-			]
-		},
-		{
-			"id": "Alexander",
-			"data": [
-				"M",
-				36,
-				"Single",
-				"Sales"
-			]
-		}
-	],
-	"model-prediction-mapping": {
-		"0": [
-			"Camping Equipment",
-			"camping.svg"
-		],
-		"1": [
-			"Personal Accessories",
-			"accessories.svg"
-		],
-		"2": [
-			"Mountaineering Equipment",
-			"mountaineering.svg"
-		],
-		"3": [
-			"Golf Equipment",
-			"golfing.svg"
-		],
-		"4": [
-			"Outdoor Protection",
-			"outdoor_protection.svg"
-		]
-	}
-};
+module.exports = {"model-schema":[{"name":"GENDER","type":"string"},{"name":"AGE","type":"integer"},{"name":"MARITAL_STATUS","type":"string"},{"name":"PROFESSION","type":"string"}],"model-input":[{"id":"Alice","data":["F",19,"Single","Professional"]},{"id":"Gregory","data":["M",57,"Married","Trades"]},{"id":"Joanna","data":["F",40,"Married","Executive"]},{"id":"Alexander","data":["M",36,"Single","Sales"]}],"model-prediction-mapping":{"0":["Camping Equipment","camping.svg"],"1":["Personal Accessories","accessories.svg"],"2":["Mountaineering Equipment","mountaineering.svg"],"3":["Golf Equipment","golfing.svg"],"4":["Outdoor Protection","outdoor_protection.svg"]}}
 
 /***/ }),
 /* 87 */
@@ -18517,6 +18438,14 @@ var DeploymentsTable = function (_Component) {
     var _this = _possibleConstructorReturn(this, (DeploymentsTable.__proto__ || Object.getPrototypeOf(DeploymentsTable)).call(this, props));
 
     _this.handleSelect = _this.handleSelect.bind(_this);
+    _this.statusKeys = {
+      'DEPLOY_IN_PROGRESS': 'Deployment In Progress',
+      'DEPLOY_SUCCESS': 'Deployment Successful',
+      'DEPLOY_FAILURE': 'Deployment Failed',
+      'UPDATE_IN_PROGRESS': 'Update In Progress',
+      'UPDATE_SUCCESS': 'Update Successful',
+      'UPDATE_FAILURE': 'Update Failed'
+    };
     return _this;
   }
 
@@ -18533,6 +18462,8 @@ var DeploymentsTable = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
+      var _this2 = this;
+
       var ctx = this;
       return _react2.default.createElement(
         'div',
@@ -18624,7 +18555,7 @@ var DeploymentsTable = function (_Component) {
                 _react2.default.createElement(
                   'td',
                   { className: _style2.default['status'] },
-                  entry.status
+                  _this2.statusKeys[entry.status]
                 ),
                 _react2.default.createElement(
                   'td',
@@ -19142,7 +19073,12 @@ var Scoring = function (_Component) {
       var ctx = this;
       this.serverRequest = $.get('/env/deployments', function (result) {
         // validate deployment's model schema
-        result = result.map(function (d) {
+        result = result.filter(function (d) {
+          if (!d.model || !d.model.input_data_schema || !d.model.input_data_schema || !d.model.input_data_schema.fields || !d.model.runtimeEnvironment || !d.model.runtimeEnvironment.includes('spark')) {
+            return false;
+          }
+          return true;
+        }).map(function (d) {
           var matches = false;
           var schema = d.model.input_data_schema.fields;
           if (schema.length === ctx.expectedSchema.length) {
@@ -20918,7 +20854,7 @@ exports = module.exports = __webpack_require__(27)();
 
 
 // module
-exports.push([module.i, ".style_deployment-table__1yDju {\n  width: 100%;\n  min-width: 880px;\n  max-height: 400px;\n  background-color: #ffffff;\n  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);\n  text-align: center; }\n\n.style_table-header__3hSWm {\n  width: 100%;\n  height: 50px;\n  border-bottom: 2px solid #e0e0e0;\n  background-color: #ffffff;\n  box-sizing: border-box;\n  text-align: left; }\n\n.style_table-header__3hSWm span {\n  color: #252f6a;\n  font-size: 10px;\n  font-weight: 500; }\n\n.style_cell__222Qx, .style_name__1EwBE, .style_enabledRowName__GqEsb, .style_status__VozdF, .style_date-created__3Slmr, .style_model-name__3hTKu, .style_model-author__2aBaE, .style_model-runtime__3DXae {\n  text-align: left;\n  height: 100%;\n  padding-left: 3px;\n  padding-right: 3px;\n  line-height: 50px; }\n\n.style_name__1EwBE, .style_enabledRowName__GqEsb {\n  width: 26%;\n  padding-left: 15px; }\n\n.style_status__VozdF {\n  width: 8%; }\n\n.style_date-created__3Slmr {\n  width: 15%; }\n\n.style_model-name__3hTKu {\n  width: 26%; }\n\n.style_model-author__2aBaE {\n  width: 13%; }\n\n.style_model-runtime__3DXae {\n  width: 12%; }\n\n.style_table-row__3xMZK, .style_enableRow__3T00O, .style_disableRow__Vji9G {\n  box-sizing: border-box;\n  border-bottom: 1px solid #e0e0e0;\n  width: 100%;\n  height: 50px;\n  text-align: left;\n  color: #777677;\n  font-size: 12px;\n  font-weight: 300; }\n\n.style_enableRow__3T00O {\n  cursor: pointer; }\n\n.style_enableRow__3T00O:hover {\n  border-left: 6px solid #f06a5d;\n  font-weight: 500; }\n\n.style_enableRow__3T00O:hover .style_enabledRowName__GqEsb {\n  color: #F06A5D; }\n\n.style_disableRow__Vji9G {\n  color: #c5c5c5;\n  cursor: not-allowed; }\n\n.style_enabledRowName__GqEsb {\n  color: #252f6a;\n  font-weight: 600; }\n", ""]);
+exports.push([module.i, ".style_deployment-table__1yDju {\n  width: 100%;\n  min-width: 880px;\n  max-height: 400px;\n  background-color: #ffffff;\n  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);\n  text-align: center; }\n\n.style_table-header__3hSWm {\n  width: 100%;\n  height: 50px;\n  border-bottom: 2px solid #e0e0e0;\n  background-color: #ffffff;\n  box-sizing: border-box;\n  text-align: left; }\n\n.style_table-header__3hSWm span {\n  color: #252f6a;\n  font-size: 10px;\n  font-weight: 500; }\n\n.style_cell__222Qx, .style_name__1EwBE, .style_enabledRowName__GqEsb, .style_status__VozdF, .style_date-created__3Slmr, .style_model-name__3hTKu, .style_model-author__2aBaE, .style_model-runtime__3DXae {\n  text-align: left;\n  height: 100%;\n  padding-left: 3px;\n  padding-right: 3px;\n  line-height: 50px; }\n\n.style_name__1EwBE, .style_enabledRowName__GqEsb {\n  width: 24%;\n  padding-left: 15px; }\n\n.style_status__VozdF {\n  width: 15%; }\n\n.style_date-created__3Slmr {\n  width: 15%; }\n\n.style_model-name__3hTKu {\n  width: 24%; }\n\n.style_model-author__2aBaE {\n  width: 11%; }\n\n.style_model-runtime__3DXae {\n  width: 11%; }\n\n.style_table-row__3xMZK, .style_enableRow__3T00O, .style_disableRow__Vji9G {\n  box-sizing: border-box;\n  border-bottom: 1px solid #e0e0e0;\n  width: 100%;\n  height: 50px;\n  text-align: left;\n  color: #777677;\n  font-size: 12px;\n  font-weight: 300; }\n\n.style_enableRow__3T00O {\n  cursor: pointer; }\n\n.style_enableRow__3T00O:hover {\n  border-left: 6px solid #f06a5d;\n  font-weight: 500; }\n\n.style_enableRow__3T00O:hover .style_enabledRowName__GqEsb {\n  color: #F06A5D; }\n\n.style_disableRow__Vji9G {\n  color: #c5c5c5;\n  cursor: not-allowed; }\n\n.style_enabledRowName__GqEsb {\n  color: #252f6a;\n  font-weight: 600; }\n", ""]);
 
 // exports
 exports.locals = {
