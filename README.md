@@ -2,6 +2,13 @@
 [bm]: https://console.ng.bluemix.net/
 [pa-api]: http://watson-ml-api.mybluemix.net/
 
+
+# Deprecation
+
+This repository is archived. Please navigate to: https://github.com/IBM/watson-machine-learning-samples
+
+---
+
 # About
 The application demonstrates usage of [IBM Watson Machine Learning][pa] [Bluemix][bm] offering.
 
